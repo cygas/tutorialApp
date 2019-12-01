@@ -5,31 +5,18 @@ import Header from './components/Header';
 import AddTodo from './components/AddTodo';
 import About from './components/pages/About';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
+import axios from "axios";
+
+const URL = 'https://jsonplaceholder.typicode.com/todos';
 
 export default class App extends Component {
   state = {
-    todos: [
-      {
-        id: 1,
-        title: 'wyrzuć śmieci',
-        completed: false
-      },
-      {
-        id: 2,
-        title: 'obiad',
-        completed: false
-      },
-      {
-        id: 3,
-        title: 'programowanko',
-        completed: true
-      },
-      {
-        id: 4,
-        title: 'hiszpański',
-        completed: false
-      }
-    ]
+    todos: []
+  };
+
+  componentDidMount() {
+    axios.get(`${URL}?_limit=10`)
+      .then(res => this.setState({todos: res.data}));
   };
 
   onCheckboxChange = todoId => {
@@ -44,20 +31,19 @@ export default class App extends Component {
   };
 
   onDeleteButtonClick = todoId => {
-    const todos = this.state.todos.filter(item => item.id !== todoId);
-    this.setState({todos});
+    axios.delete(`${URL}/${todoId}`)
+      .then(res => {
+        const todos = this.state.todos.filter(item => item.id !== todoId);
+        this.setState({todos});        
+      });    
   };
 
   addTodo = title => {
-    const lastId = this.state.todos[this.state.todos.length -1].id;
-    const newTodo = {
-      id: lastId + 1, 
-      title, 
+    axios.post(URL, {
+      title,
       completed: false
-    };
-    const todos = [...this.state.todos, newTodo];
-
-    this.setState({todos});
+    })
+      .then(res => this.setState(prev => ({todos: [...prev.todos, res.data]})));
   };
 
   render() {
