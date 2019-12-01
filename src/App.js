@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import "./App.css";
 import Todos from './components/Todos';
+import Header from './components/Header';
+import AddTodo from './components/AddTodo';
+import About from './components/pages/About';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 
 export default class App extends Component {
   state = {
@@ -44,15 +48,36 @@ export default class App extends Component {
     this.setState({todos});
   };
 
+  addTodo = title => {
+    const lastId = this.state.todos[this.state.todos.length -1].id;
+    const newTodo = {
+      id: lastId + 1, 
+      title, 
+      completed: false
+    };
+    const todos = [...this.state.todos, newTodo];
+
+    this.setState({todos});
+  };
+
   render() {
     return (
-      <div className="App">
-        <Todos 
-          todos={this.state.todos}
-          handleChange={this.onCheckboxChange}
-          handleDelete={this.onDeleteButtonClick}
-        />
-      </div>
+      <Router>
+        <div className="App">
+          <Header />
+          <Route exact path="/" render={props => (
+            <React.Fragment>
+              <AddTodo addTodo={this.addTodo}/>
+              <Todos 
+                todos={this.state.todos}
+                handleChange={this.onCheckboxChange}
+                handleDelete={this.onDeleteButtonClick}
+              />
+            </React.Fragment>
+          )} />
+          <Route path="/about" component={About} />
+        </div>
+      </Router>
     )
   };
 }
