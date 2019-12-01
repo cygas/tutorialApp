@@ -1,0 +1,14 @@
+.header-container {
+    background: #333;
+    color: white;
+    padding: 10px;
+}
+
+.header-container h1 {
+    margin: 0;
+}
+
+.route-container a{
+    color: white;
+    text-decoration: none;
+}
